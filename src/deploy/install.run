@@ -1,0 +1,15 @@
+<?php
+/**
+ * SSO - A single sign-on module for Sentora.
+ * @author Bobby Allen (ballen@bobbyallen.me)
+ * @copyright (c) 2015, Supared Limited
+ * @link https://github.com/supared/sentora-sso
+ * @license https://github.com/supared/sentora-sso/blob/master/LICENSE
+ * @version 1.0.0
+ */
+
+/**
+ * Install the SSO module configuration system options.
+ */
+$key = md5(time());
+ctrl_options::SetSystemOption('sso_key', $key, true);
