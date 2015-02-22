@@ -30,6 +30,12 @@ class SSO
     private $token;
 
     /**
+     * Holds the unencrypted token data as an array.
+     * @var array
+     */
+    private $data = array();
+
+    /**
      * Registry pattern instance storage.
      * @var SSO
      */
@@ -58,7 +64,7 @@ class SSO
 
     /**
      * Set the encryption key.
-     * @param string $key
+     * @param string $key 48-bit string
      */
     public function setKey($key)
     {
@@ -67,7 +73,7 @@ class SSO
 
     /**
      * Set the initiation vector used by the 3DES encryption.
-     * @param type $iv
+     * @param string $iv 16-bit string
      */
     public function setIv($iv)
     {
@@ -77,12 +83,22 @@ class SSO
     /**
      * Decrypt the given token.
      * @param string $token
-     * @return string
+     * @return SSO
      */
     public function decrypt($token)
     {
         $this->token = $token;
-        return $this->decryptSSOToken();
+        $this->tokenDataToArray($this->decryptSSOToken());
+        return $this;
+    }
+
+    /**
+     * Return the SSO data as an array.
+     * @return array
+     */
+    public function ssoData()
+    {
+        return $this->data;
     }
 
     /**
@@ -102,8 +118,9 @@ class SSO
      * @param string $hex
      * @return string
      */
-    private function hexToAscii($hex)
+    private static function hexToAscii($hex)
     {
+        $ascii = "";
         $clean_hex = str_replace(' ', '', $hex);
         for ($i = 0; $i < strlen($clean_hex); $i = $i + 2) {
             $ascii .= chr(hexdec(substr($clean_hex, $i, 2)));
@@ -117,7 +134,20 @@ class SSO
      */
     private function decryptSSOToken()
     {
-        $asciiToken = $this->hexToAscii($this->token);
-        return mcrypt_decrypt(MCRYPT_3DES, $this->key, $asciiToken, MCRYPT_MODE_CBC, $this->iv);
+        $asciiToken = self::hexToAscii($this->token);
+        return mcrypt_decrypt(MCRYPT_3DES, self::hexToAscii($this->key), $asciiToken, MCRYPT_MODE_CBC, self::hexToAscii($this->iv));
+    }
+
+    /**
+     * Generates an key and value array from the decrypted token.
+     * @return void
+     */
+    private function tokenDataToArray($token)
+    {
+        $keyvalues = explode(';', $token);
+        foreach ($keyvalues as $keyvalue) {
+            $sorted = split('=', $keyvalue);
+            $this->data[$sorted[0]] = $sorted[1];
+        }
     }
 }

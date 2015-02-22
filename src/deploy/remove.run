@@ -11,4 +11,4 @@
 /**
  * Removal of the SSO module config option from the Sentora settings table.
  */
-$zdbh->exec("DELETE FROM x_settings WHERE so_name_vc = 'sso_key';");
+$zdbh->exec("DELETE FROM x_settings WHERE so_name_vc = 'sso_config';");

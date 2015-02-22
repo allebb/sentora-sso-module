@@ -7,6 +7,15 @@
  * @license https://github.com/supared/sentora-sso/blob/master/LICENSE
  * @version 1.0.0
  */
-require_once __DIR__ . '/../libs/SSO.php';
-$conf = json_decode(ctrl_options::GetSystemOption('sso_config'), true);
-$sso = SSO::getInstance($conf);
+if (isset($_REQUEST['ssoToken'])) {
+
+    require_once __DIR__ . '/../libs/SSO.php';
+    
+    $conf = json_decode(ctrl_options::GetSystemOption('sso_config'));
+    
+    $sso = SSO::getInstance();
+    $sso->setKey($conf->crypto->key);
+    $sso->setIv($conf->crypto->iv);
+
+    die(var_dump($credentials = $sso->decrypt($_REQUEST['ssoToken'])->ssoData()));
+}

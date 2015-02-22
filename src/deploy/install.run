@@ -11,5 +11,11 @@
 /**
  * Install the SSO module configuration system options.
  */
-$key = md5(time());
-ctrl_options::SetSystemOption('sso_key', $key, true);
+$sso_config = json_encode(array(
+    'disable_form_login' => false,
+    'disable_sso_login' => false,
+    'crypto' => array(
+        'key' => 'KbAJDGUyNCKBpL8lgzumt5ftpfwKXUW5IcDtETQYMhjcLFef',
+        'iv' => 'ZK2UGWqjqJQJ8fmZ'),
+    ));
+ctrl_options::SetSystemOption('sso_config', $sso_config, true);
