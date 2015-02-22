@@ -146,8 +146,10 @@ class SSO
     {
         $keyvalues = explode(';', $token);
         foreach ($keyvalues as $keyvalue) {
-            $sorted = split('=', $keyvalue);
-            $this->data[$sorted[0]] = $sorted[1];
+            $sorted = explode('=', $keyvalue);
+            if (isset($sorted[1])) {
+                $this->data[$sorted[0]] = $sorted[1];
+            }
         }
     }
 }

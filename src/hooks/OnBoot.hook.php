@@ -7,15 +7,45 @@
  * @license https://github.com/supared/sentora-sso/blob/master/LICENSE
  * @version 1.0.0
  */
+global $zdbh;
+
 if (isset($_REQUEST['ssoToken'])) {
 
+    ini_set('display_startup_errors', 1);
+    ini_set('display_errors', 1);
+    error_reporting(-1);
+
     require_once __DIR__ . '/../libs/SSO.php';
-    
+
     $conf = json_decode(ctrl_options::GetSystemOption('sso_config'));
-    
+
     $sso = SSO::getInstance();
     $sso->setKey($conf->crypto->key);
     $sso->setIv($conf->crypto->iv);
 
-    die(var_dump($credentials = $sso->decrypt($_REQUEST['ssoToken'])->ssoData()));
+    $credentials = $sso->decrypt($_REQUEST['ssoToken'])->ssoData();
+
+    if (isset($credentials['id']) && isset($credentials['user'])) {
+        $sql = $zdbh->prepare("SELECT ac_id_pk, ac_user_vc"
+            . " FROM x_accounts"
+            . " WHERE ac_id_pk = :uid"
+            . " AND ac_user_vc = :username"
+            . " AND ac_deleted_ts IS NULL"
+            . " AND ac_enabled_in = 1");
+        $sql->bindParam(':uid', $credentials['id']);
+        $sql->bindParam(':username', $credentials['user']);
+        $sql->execute();
+
+        $authenticated = $sql->fetch();
+
+        if ($authenticated) {
+            ctrl_auth::SetUserSession($authenticated['ac_id_pk'], false);
+            $log_user_auth = $zdbh->prepare("UPDATE x_accounts SET ac_lastlogon_ts=" . time() . " WHERE ac_id_pk= :uid");
+            $log_user_auth->bindParam(':uid', $authenticated['ac_id_pk']);
+            $log_user_auth->execute();
+        } else {
+            header("location: ./?invalidlogin&type=sso");
+            exit();
+        }
+    }
 }
