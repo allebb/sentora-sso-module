@@ -24,6 +24,12 @@ class SSO
     private $iv;
 
     /**
+     * The SSO token string.
+     * @var string
+     */
+    private $token;
+
+    /**
      * Registry pattern instance storage.
      * @var SSO
      */
@@ -71,10 +77,12 @@ class SSO
     /**
      * Decrypt the given token.
      * @param string $token
+     * @return string
      */
     public function decrypt($token)
     {
-        
+        $this->token = $token;
+        return $this->decryptSSOToken();
     }
 
     /**
@@ -103,8 +111,13 @@ class SSO
         return $ascii;
     }
 
+    /**
+     * Decrypts the object token using the set key and IV.
+     * @return string
+     */
     private function decryptSSOToken()
     {
-        
+        $asciiToken = $this->hexToAscii($this->token);
+        return mcrypt_decrypt(MCRYPT_3DES, $this->key, $asciiToken, MCRYPT_MODE_CBC, $this->iv);
     }
 }
