@@ -33,4 +33,4 @@ Now that you have it install, go and activate the module in the Sentora Module A
 
 ## Support
 
-Premium support is provided by Supared Limited. If you would like consultancy/development services to implement this into your existing solution please contact us at: [hello@supared.com].
+Premium support is provided by Supared Limited. If you would like consultancy/development services to implement this into your existing solution please contact us at: hello@supared.com
