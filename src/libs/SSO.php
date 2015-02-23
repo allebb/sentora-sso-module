@@ -107,7 +107,7 @@ class SSO
      */
     private function mcryptCheck()
     {
-        if (!function_exists('mcrypt_encrypt') || !function_exists('mcrypt_encrypt')) {
+        if (!function_exists('mcrypt_decrypt')) {
             return false;
         }
         return true;

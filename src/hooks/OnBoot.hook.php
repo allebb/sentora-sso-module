@@ -9,7 +9,7 @@
  */
 global $zdbh;
 
-if (isset($_REQUEST['ssoToken'])) {
+if (isset($_REQUEST['ssoToken']) && isset($_REQUEST['ssoInit'])) {
 
     ini_set('display_startup_errors', 1);
     ini_set('display_errors', 1);
@@ -20,8 +20,8 @@ if (isset($_REQUEST['ssoToken'])) {
     $conf = json_decode(ctrl_options::GetSystemOption('sso_config'));
 
     $sso = SSO::getInstance();
-    $sso->setKey($conf->crypto->key);
-    $sso->setIv($conf->crypto->iv);
+    $sso->setKey($conf->key);
+    $sso->setIv($_REQUEST['ssoInit']);
 
     $credentials = $sso->decrypt($_REQUEST['ssoToken'])->ssoData();
 

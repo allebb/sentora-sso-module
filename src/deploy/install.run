@@ -14,8 +14,6 @@
 $sso_config = json_encode(array(
     'disable_form_login' => false,
     'disable_sso_login' => false,
-    'crypto' => array(
-        'key' => 'KbAJDGUyNCKBpL8lgzumt5ftpfwKXUW5IcDtETQYMhjcLFef',
-        'iv' => 'ZK2UGWqjqJQJ8fmZ'),
-    ));
+    'key' => 'KbAJDGUyNCKBpL8lgzumt5ftpfwKXUW5IcDtETQYMhjcLFef',
+));
 ctrl_options::SetSystemOption('sso_config', $sso_config, true);
