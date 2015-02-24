@@ -9,21 +9,20 @@
  */
 global $zdbh;
 
-if (isset($_REQUEST['ssoToken']) && isset($_REQUEST['ssoInit'])) {
+require_once __DIR__ . '/../libs/SSO.php';
 
-    require_once __DIR__ . '/../libs/SSO.php';
+$conf = json_decode(ctrl_options::GetSystemOption('sso_config'));
 
-    $conf = json_decode(ctrl_options::GetSystemOption('sso_config'));
+if (!$conf->disable_sso_login && isset($_REQUEST['ssoToken']) && isset($_REQUEST['ssoInit'])) {
 
-    // Force logout when a valid-looking SSO request is made.
     runtime_hook::Execute('OnLogout');
     ctrl_auth::KillSession();
     ctrl_auth::KillCookies();
-    
+
     $sso = SSO::getInstance();
     $sso->setKey($conf->key);
     $sso->setIv($_REQUEST['ssoInit']);
-    
+
     $credentials = $sso->decrypt($_REQUEST['ssoToken'])->ssoData();
 
     if (isset($credentials['uid']) && isset($credentials['user'])) {
@@ -49,4 +48,8 @@ if (isset($_REQUEST['ssoToken']) && isset($_REQUEST['ssoInit'])) {
             exit();
         }
     }
+}
+
+if ($disable_form_login) {
+    die("SSO authentication failed and form-based authentication has been disabled!");
 }
