@@ -61,6 +61,12 @@ class module_controller extends ctrl_module
         if (isset($_REQUEST['saved']) && $_REQUEST['saved'] == 'false') {
             return ui_sysmessage::shout(ui_language::translate("An error occured and the changes to the SSO module configuration could not be saved."), "zannounceerror");
         }
+        if (isset($_REQUEST['verror']) && $_REQUEST['verror'] == 'keylength') {
+            return ui_sysmessage::shout(ui_language::translate("The shared key value must consist of 48 characters, please try again!"), "zannounceerror");
+        }
+        if (isset($_REQUEST['verror']) && $_REQUEST['verror'] == 'noauth') {
+            return ui_sysmessage::shout(ui_language::translate("You must have atleast one authentication method enabled, please try again!"), "zannounceerror");
+        }
     }
 
     /**
@@ -73,10 +79,18 @@ class module_controller extends ctrl_module
         runtime_csfr::Protect();
         $res_state = "false";
         $formvars = $controller->GetAllControllerRequests('FORM');
+        if (self::validateValidAuthConfig($formvars['forms_auth'], $formvars['sso_auth'])) {
+            header("location: ./?module=" . $controller->GetCurrentModule() . "&verror=noauth");
+            exit;
+        }
+        if (self::validateKeyLength($formvars['shared_key'])) {
+            header("location: ./?module=" . $controller->GetCurrentModule() . "&verror=keylength");
+            exit;
+        }
         if (self::saveConfiguration(array(
                 'disable_form_login' => (boolean) !$formvars['forms_auth'],
                 'disable_sso_login' => (boolean) !$formvars['sso_auth'],
-                'key' => (boolean) $formvars['shared_key'],
+                'key' => $formvars['shared_key'],
             ))) {
             $res_state = "true";
         }
@@ -100,5 +114,34 @@ class module_controller extends ctrl_module
     private static function saveConfiguration(array $options)
     {
         return ctrl_options::SetSystemOption('sso_config', json_encode($options));
+    }
+
+    /**
+     * Validates that the shared key size is set to 48 characters.
+     * @param string $key
+     * @return boolean
+     */
+    private static function validateKeyLength($key)
+    {
+        if (strlen($key) != 48) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validates that atleast one authentication method is available.
+     * @param string $forms
+     * @param string $sso
+     * @return boolean
+     */
+    private static function validateValidAuthConfig($forms, $sso)
+    {
+        $forms_bool = (boolean) $forms;
+        $sso_bool = (boolean) $sso;
+        if (!$forms_bool && !$sso_bool) {
+            return false;
+        }
+        return true;
     }
 }
