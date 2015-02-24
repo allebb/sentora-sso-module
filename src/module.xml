@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module>
-    <name>SSO</name>
+    <name>Single Sign-on</name>
     <version>100</version>
     <defaultcat>Server Admin</defaultcat>
     <type>user</type>

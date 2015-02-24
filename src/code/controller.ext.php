@@ -79,11 +79,11 @@ class module_controller extends ctrl_module
         runtime_csfr::Protect();
         $res_state = "false";
         $formvars = $controller->GetAllControllerRequests('FORM');
-        if (self::validateValidAuthConfig($formvars['forms_auth'], $formvars['sso_auth'])) {
+        if (!self::validateValidAuthConfig($formvars['forms_auth'], $formvars['sso_auth'])) {
             header("location: ./?module=" . $controller->GetCurrentModule() . "&verror=noauth");
             exit;
         }
-        if (self::validateKeyLength($formvars['shared_key'])) {
+        if (!self::validateKeyLength($formvars['shared_key'])) {
             header("location: ./?module=" . $controller->GetCurrentModule() . "&verror=keylength");
             exit;
         }
