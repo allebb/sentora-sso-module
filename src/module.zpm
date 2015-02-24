@@ -1,0 +1,40 @@
+<div class="zmodule_content panel" id="zmodule_header_<@ ModuleName @>">
+    <div class="panel-heading">
+        <img src="<@ ModuleIcon @>" width="35" height="35" border="0" alt="<@ ModuleName @>">
+
+        <div class="zmodule_title">
+            <@ ModuleName @>
+        </div>
+
+        <div class="zmodule_desc" id="zmodule_desc_<@ ModuleName @>"><: This module enables you to configure the SSO module configuration settings. :></p></div>
+
+    </div>
+    <@ Result @>
+    <div class="zform_wrapper">
+        <form action="./?module=sso&action=UpdateConf" method="post">
+            <table class="table table-striped">
+                <tr>
+                    <th><: Form-based authentication enabled? :>:</th>
+                    <td><input type="checkbox" name="forms_auth" id="forms_auth" value="1" <@ IsFormsAuthEnabled @> />
+                               <br><small><: This will disable the default Sentora login and forgotten password functionality! :></small></td>
+                </tr>
+                <tr>
+                    <th><: Single Sign-On authentication enabled? :>:</th>
+                    <td><input type="checkbox" name="sso_auth" id="sso_auth" value="1" <@ IsSSOAuthEnabled @>/></td>
+                </tr>
+                <tr>
+                    <th><: Shared Key :>:</th>
+                    <td><input type="text" name="shared_key" id="shared_key" value="<@ SharedKey @>">
+                        <br><small><: This is the shared encryption key that will be used to decrypt the SSO token. :></small></td>
+                </tr>
+                <tr>
+                    <th colspan="2" align="right">
+                        <button class="button-loader add-row btn btn-primary" type="submit" ><: Save changes :></button>
+                    </th>
+                </tr>
+            </table>
+            <@ CSFR_Tag @>
+        </form>
+    </div>
+
+</div>
