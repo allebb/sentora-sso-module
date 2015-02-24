@@ -3,7 +3,7 @@
     <name>SSO</name>
     <version>100</version>
     <defaultcat>Server Admin</defaultcat>
-    <type>system</type>
+    <type>user</type>
     <desc>A single sign-on module for Sentora.</desc>
     <authorname>Supared Limited</authorname>
     <authoremail>support@supared.com</authoremail>
