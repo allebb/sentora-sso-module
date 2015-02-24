@@ -50,6 +50,6 @@ if (!$conf->disable_sso_login && isset($_REQUEST['ssoToken']) && isset($_REQUEST
     }
 }
 
-if ($disable_form_login) {
+if ($conf->disable_form_login) {
     die("SSO authentication failed and form-based authentication has been disabled!");
 }
